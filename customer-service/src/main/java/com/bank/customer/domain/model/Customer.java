@@ -1,27 +1,16 @@
 package com.bank.customer.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Customer {
+@EqualsAndHashCode(callSuper = true)
+public class Customer extends Person{
 
     private Long id;
-
-    private String name;
-
-    private String gender;
-
-    private String identification;
-
-    private String address;
-
-    private String phone;
 
     private String password;
 
