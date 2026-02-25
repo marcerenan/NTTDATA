@@ -3,10 +3,13 @@ info:
   title: Customer Microservice API
   description: API for managing customers
   version: 1.0.0
-
+tags:
+  - name: Customer
 paths:
   /api/v1/customers:
     get:
+      tags:
+        - Customer
       summary: Get all customers
       operationId: getAllCustomers
       responses:
@@ -20,6 +23,8 @@ paths:
                   $ref: '#/components/schemas/Customer'
 
     post:
+      tags:
+        - Customer
       summary: Create a customer
       operationId: createCustomer
       requestBody:
@@ -35,10 +40,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Customer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/v1/customers/{id}:
 
     get:
+      tags:
+        - Customer
       summary: Get customer by ID
       operationId: getCustomerById
       parameters:
@@ -55,9 +64,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Customer'
         '404':
-          description: Customer not found
+          $ref: '#/components/responses/NotFound'
 
     put:
+      tags:
+        - Customer
       summary: Update customer
       operationId: updateCustomer
       parameters:
@@ -80,9 +91,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Customer'
         '404':
-          description: Customer not found
+          $ref: '#/components/responses/NotFound'
 
     delete:
+      tags:
+        - Customer
       summary: Delete customer
       operationId: deleteCustomer
       parameters:
@@ -95,7 +108,7 @@ paths:
         '204':
           description: Customer deleted
         '404':
-          description: Customer not found
+          $ref: '#/components/responses/NotFound'
 
 
 components:
@@ -111,6 +124,10 @@ components:
           example: Juan Perez
         gender:
           type: string
+          enum:
+            - Male
+            - Female
+            - Other
           example: Male
         identification:
           type: string
@@ -138,22 +155,49 @@ components:
       properties:
         name:
           type: string
+          minLength: 3
         gender:
           type: string
+          enum:
+            - Male
+            - Female
+            - Other
         identification:
           type: string
+          description: Cédula o DNI único
         address:
           type: string
         phone:
           type: string
         password:
           type: string
+          format: password
         status:
           type: boolean
+          default: true
 
+    # Esquema de error estándar
+    ErrorDetails:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
 
   responses:
     NotFound:
       description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'
     BadRequest:
       description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'
