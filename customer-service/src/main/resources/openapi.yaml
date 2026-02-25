@@ -1,0 +1,159 @@
+openapi: 3.0.3
+info:
+  title: Customer Microservice API
+  description: API for managing customers
+  version: 1.0.0
+
+paths:
+  /api/v1/customers:
+    get:
+      summary: Get all customers
+      operationId: getAllCustomers
+      responses:
+        '200':
+          description: List of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+
+    post:
+      summary: Create a customer
+      operationId: createCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequest'
+      responses:
+        '201':
+          description: Customer created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+
+  /api/v1/customers/{id}:
+
+    get:
+      summary: Get customer by ID
+      operationId: getCustomerById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Customer found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          description: Customer not found
+
+    put:
+      summary: Update customer
+      operationId: updateCustomer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequest'
+      responses:
+        '200':
+          description: Customer updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          description: Customer not found
+
+    delete:
+      summary: Delete customer
+      operationId: deleteCustomer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Customer deleted
+        '404':
+          description: Customer not found
+
+
+components:
+  schemas:
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Juan Perez
+        gender:
+          type: string
+          example: Male
+        identification:
+          type: string
+          example: 1234567890
+        address:
+          type: string
+          example: Quito Ecuador
+        phone:
+          type: string
+          example: 0999999999
+        password:
+          type: string
+          example: 12345
+        status:
+          type: boolean
+          example: true
+
+
+    CustomerRequest:
+      type: object
+      required:
+        - name
+        - identification
+        - password
+      properties:
+        name:
+          type: string
+        gender:
+          type: string
+        identification:
+          type: string
+        address:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+        status:
+          type: boolean
+
+
+  responses:
+    NotFound:
+      description: Resource not found
+    BadRequest:
+      description: Invalid request
