@@ -14,4 +14,6 @@ public interface AccountRepository {
     Mono<Account> findById(Integer id);
 
     Mono<Account> update(Integer id, Account account);
+
+    Flux<Account> findByCustomerId(Integer customerId);
 }

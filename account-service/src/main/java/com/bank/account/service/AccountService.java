@@ -3,6 +3,7 @@ package com.bank.account.service;
 import com.bank.account.domain.exception.ObjectNotFoundException;
 import com.bank.account.domain.model.Account;
 import com.bank.account.domain.repository.AccountRepository;
+import com.bank.account.infrastructure.persistence.repository.ValidatedCustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -13,13 +14,19 @@ import reactor.core.publisher.Mono;
 public class AccountService {
 
     private final AccountRepository repository;
+    private final ValidatedCustomerRepository valRepository;
 
     public Flux<Account> getAll(){
         return repository.findAll();
     }
 
     public Mono<Account> save(Account account){
-        return repository.save(account);
+        return valRepository.findById( account.getCustomerId() )
+                .switchIfEmpty(Mono.error(new RuntimeException("El customer no existe")))
+                .flatMap(validatedCustomer -> {
+                    return repository.save(account);
+                });
+
     }
 
     public Mono<Void> delete(Integer id){

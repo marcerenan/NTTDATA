@@ -214,6 +214,61 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  /reports/{client-id}:
+    get:
+      summary: Generar reporte de estado de cuenta
+      description: >
+        Genera el reporte de estado de cuenta de un cliente
+        en un rango de fechas determinado.
+      operationId: getAccountStatementReport
+      tags:
+        - Reportes
+      parameters:
+        - name: client-id
+          in: path
+          required: true
+          description: Identificador unico del cliente
+          schema:
+            type: integer
+            example: "12345"
+
+        - name: startDate
+          in: query
+          required: true
+          description: Fecha inicial del reporte
+          schema:
+            type: string
+            format: date
+            example: "2025-01-01"
+
+        - name: endDate
+          in: query
+          required: true
+          description: Fecha final del reporte
+          schema:
+            type: string
+            format: date
+            example: "2025-01-31"
+
+      responses:
+        "200":
+          description: Reporte generado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountStatementReport'
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+
+        "400":
+          $ref: '#/components/responses/NotFound'
+        "404":
+          description: Cliente no encontrado
+        "500":
+          description: Error interno del servidor
+
 components:
   schemas:
     Account:
@@ -322,6 +377,40 @@ components:
           minimum: 0
           exclusiveMinimum: true
           example: 100.00
+    AccountStatementReport:
+      type: object
+      properties:
+        #client:
+        #  $ref: '#/components/schemas/Client'
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Accounts'
+    Accounts:
+      type: object
+      properties:
+        accountNumber:
+          type: string
+          example: 123456
+        accountType:
+          type: string
+          enum:
+            - Savings
+            - Checking
+          example: Savings
+        initialBalance:
+          type: number
+          example: 100.00
+        movements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Movement'
 
     # Esquema de error estandar
     ErrorDetails:

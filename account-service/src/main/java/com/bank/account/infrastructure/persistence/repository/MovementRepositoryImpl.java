@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+
 @Repository
 @RequiredArgsConstructor
 public class MovementRepositoryImpl implements MovementRepository {
@@ -55,5 +57,21 @@ public class MovementRepositoryImpl implements MovementRepository {
                     movementEntity.setId( id );
                     return repository.save(movementEntity).map(mapper::toDomain);
                 });
+    }
+
+    @Override
+    public Flux<Movement> findByAccountIdAndDates(
+            Integer accountId,
+            LocalDateTime startDate,
+            LocalDateTime endDate) {
+
+        return repository
+                .findByAccountIdAndMovementDateBetween(
+                        accountId,
+                        startDate,
+                        endDate
+                )
+                .map(mapper::toDomain);
+
     }
 }

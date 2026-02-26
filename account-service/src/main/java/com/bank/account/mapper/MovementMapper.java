@@ -20,7 +20,7 @@ public interface MovementMapper {
     public Movement toDomainRequest(com.bank.account.domain.model.dto.MovementRequest e);
 
     default OffsetDateTime map(LocalDateTime value) {
-        return value == null ? null : value.atOffset(ZoneOffset.UTC);
+        return value == null ? null : value.atOffset(ZoneOffset.of("-05:00"));
     }
 
     default LocalDateTime map(OffsetDateTime value) {

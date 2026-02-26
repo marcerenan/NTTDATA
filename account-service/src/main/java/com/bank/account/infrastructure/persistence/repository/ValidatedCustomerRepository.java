@@ -22,4 +22,8 @@ public class ValidatedCustomerRepository {
         log.info("Se borro un customer:" + id );
         return repository.deleteById( id.intValue() ).then();
     }
+
+    public Mono<ValidatedCustomerEntity> findById(Long id) {
+        return repository.findById( id.intValue() );
+    }
 }

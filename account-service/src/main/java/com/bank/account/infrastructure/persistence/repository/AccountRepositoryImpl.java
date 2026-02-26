@@ -56,4 +56,13 @@ public class AccountRepositoryImpl implements AccountRepository {
                     return repository.save(accountEntity).map(mapper::toDomain);
                 });
     }
+
+    @Override
+    public Flux<Account> findByCustomerId(Integer customerId) {
+
+        return repository
+                .findByCustomerId(customerId)
+                .map(mapper::toDomain);
+
+    }
 }
