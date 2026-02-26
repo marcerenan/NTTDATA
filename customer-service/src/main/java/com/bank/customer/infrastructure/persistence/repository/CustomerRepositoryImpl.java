@@ -2,7 +2,6 @@ package com.bank.customer.infrastructure.persistence.repository;
 
 import com.bank.customer.domain.exception.CustomerNotFoundException;
 import com.bank.customer.domain.model.Customer;
-import com.bank.customer.domain.model.CustomerEvent;
 import com.bank.customer.domain.repository.CustomerRepository;
 import com.bank.customer.infrastructure.persistence.entity.CustomerEntity;
 import com.bank.customer.mapper.CustomerMapper;
