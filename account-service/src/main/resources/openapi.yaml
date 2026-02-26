@@ -1,0 +1,192 @@
+openapi: 3.0.3
+info:
+  title: Account Microservice API
+  description: API for managing accounts
+  version: 1.0.0
+tags:
+  - name: Account
+paths:
+  /api/v1/accounts:
+    get:
+      tags:
+        - Account
+      summary: Get all accounts
+      operationId: getAllAccounts
+      responses:
+        '200':
+          description: List of accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+
+    post:
+      tags:
+        - Account
+      summary: Create a account
+      operationId: createAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+      responses:
+        '201':
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/v1/accounts/{id}:
+
+    get:
+      tags:
+        - Account
+      summary: Get account by ID
+      operationId: getAccountById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Account found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Account
+      summary: Update account
+      operationId: updateAccount
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+      responses:
+        '200':
+          description: Account updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Account
+      summary: Delete account
+      operationId: deleteAccount
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Account deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        accountNumber:
+          type: string
+          example: 123456
+        accountType:
+          type: string
+          enum:
+            - Savings
+            - Checking
+          example: Savings
+        initialBalance:
+          type: number
+          example: 100.00
+        customerId:
+          type: integer
+          example: 12345
+        status:
+          type: boolean
+          example: true
+
+
+    AccountRequest:
+      type: object
+      required:
+        - accountNumber
+        - accountType
+        - customerId
+      properties:
+        accountNumber:
+          type: string
+          example: 123456
+        accountType:
+          type: string
+          enum:
+            - Savings
+            - Checking
+          example: Savings
+        initialBalance:
+          type: number
+          example: 100.00
+        customerId:
+          type: integer
+          example: 12345
+        status:
+          type: boolean
+          example: true
+
+    # Esquema de error estándar
+    ErrorDetails:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'
