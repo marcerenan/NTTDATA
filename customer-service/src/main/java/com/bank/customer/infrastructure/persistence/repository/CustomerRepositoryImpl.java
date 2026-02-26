@@ -2,6 +2,7 @@ package com.bank.customer.infrastructure.persistence.repository;
 
 import com.bank.customer.domain.exception.CustomerNotFoundException;
 import com.bank.customer.domain.model.Customer;
+import com.bank.customer.domain.model.CustomerEvent;
 import com.bank.customer.domain.repository.CustomerRepository;
 import com.bank.customer.infrastructure.persistence.entity.CustomerEntity;
 import com.bank.customer.mapper.CustomerMapper;
@@ -18,6 +19,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     private final CustomerJpaRepository jpaRepository;
     private final CustomerMapper mapper;
+    private final CustomerProducer producer;
 
     @Override
     public Flux<Customer> findAll() {
@@ -51,18 +53,28 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                     return jpaRepository.save(entity);
                 })
                 .subscribeOn(Schedulers.boundedElastic())
-                .map(mapper::toDomain);
+                .map(mapper::toDomain)
+                .flatMap(savedCustomer ->{
+                    return producer.notifyCustomerChange("CREATE",savedCustomer.getId())
+                            .thenReturn(savedCustomer);
+                    }
+
+                );
     }
 
     @Override
     public Mono<Void> deleteById(Long id) {
-        return Mono.fromRunnable(() -> {
+        return Mono.fromCallable(() -> {
                     if (!jpaRepository.existsById(id)) {
                         throw new CustomerNotFoundException("No se puede eliminar: Cliente no encontrado con ID: " + id);
                     }
                     jpaRepository.deleteById(id);
+                    return id;
                 })
                 .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(deletedId ->
+                        producer.notifyCustomerChange("DELETE", deletedId)
+                )
                 .then();
     }
 }
