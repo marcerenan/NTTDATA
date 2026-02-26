@@ -1,6 +1,6 @@
 package com.bank.account.exception;
 
-import com.bank.account.domain.exception.AccountNotFoundException;
+import com.bank.account.domain.exception.ObjectNotFoundException;
 import com.bank.account.domain.model.dto.ErrorDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AccountNotFoundException.class)
-    public Mono<ResponseEntity<ErrorDetails>> handleNotFound(AccountNotFoundException ex) {
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public Mono<ResponseEntity<ErrorDetails>> handleNotFound(ObjectNotFoundException ex) {
         log.error("Resource not found: {}", ex.getMessage());
         ErrorDetails error = buildError("NOT_FOUND", ex.getMessage());
         return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(error));

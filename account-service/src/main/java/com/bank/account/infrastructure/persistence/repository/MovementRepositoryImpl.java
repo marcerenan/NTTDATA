@@ -1,10 +1,10 @@
 package com.bank.account.infrastructure.persistence.repository;
 
 import com.bank.account.domain.exception.ObjectNotFoundException;
-import com.bank.account.domain.model.Account;
-import com.bank.account.domain.repository.AccountRepository;
-import com.bank.account.infrastructure.persistence.entity.AccountEntity;
-import com.bank.account.mapper.AccountMapper;
+import com.bank.account.domain.model.Movement;
+import com.bank.account.domain.repository.MovementRepository;
+import com.bank.account.infrastructure.persistence.entity.MovementEntity;
+import com.bank.account.mapper.MovementMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -12,20 +12,20 @@ import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
-public class AccountRepositoryImpl implements AccountRepository {
+public class MovementRepositoryImpl implements MovementRepository {
 
-    private final AccountR2Repository repository;
-    private final AccountMapper mapper;
+    private final MovementR2Repository repository;
+    private final MovementMapper mapper;
 
     @Override
-    public Flux<Account> findAll() {
+    public Flux<Movement> findAll() {
         return repository.findAll().map(mapper::toDomain);
     }
 
     @Override
-    public Mono<Account> save(Account account) {
-        AccountEntity accountEntity = mapper.toEntity(account);
-        return repository.save( accountEntity ).map(mapper::toDomain);
+    public Mono<Movement> save(Movement movement) {
+        MovementEntity movementEntity = mapper.toEntity(movement);
+        return repository.save( movementEntity ).map(mapper::toDomain);
     }
 
     @Override
@@ -40,20 +40,20 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public Mono<Account> findById(Integer id) {
+    public Mono<Movement> findById(Integer id) {
         return repository.findById(id).map(mapper::toDomain);
     }
 
     @Override
-    public Mono<Account> update(Integer id, Account account) {
+    public Mono<Movement> update(Integer id, Movement movement) {
         return repository.existsById(id)
                 .flatMap(exists -> {
                     if (!exists) {
                         return Mono.error(new ObjectNotFoundException("No se puede eliminar: ID " + id + " no encontrado"));
                     }
-                    AccountEntity accountEntity = mapper.toEntity(account);
-                    accountEntity.setId( id );
-                    return repository.save(accountEntity).map(mapper::toDomain);
+                    MovementEntity movementEntity = mapper.toEntity(movement);
+                    movementEntity.setId( id );
+                    return repository.save(movementEntity).map(mapper::toDomain);
                 });
     }
 }

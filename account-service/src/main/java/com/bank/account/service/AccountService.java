@@ -1,6 +1,6 @@
 package com.bank.account.service;
 
-import com.bank.account.domain.exception.AccountNotFoundException;
+import com.bank.account.domain.exception.ObjectNotFoundException;
 import com.bank.account.domain.model.Account;
 import com.bank.account.domain.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +28,12 @@ public class AccountService {
 
     public Mono<Account> getById(Integer id) {
         return repository.findById(id)
-                .switchIfEmpty(Mono.error(new AccountNotFoundException("Account not found with ID: " + id)));
+                .switchIfEmpty(Mono.error(new ObjectNotFoundException("Account not found with ID: " + id)));
     }
 
     public Mono<Account> update(Integer id, Account accountDetails) {
         return repository.findById(id)
-                .switchIfEmpty(Mono.error(new AccountNotFoundException("No se puede actualizar: Account no encontrado con ID: " + id)))
+                .switchIfEmpty(Mono.error(new ObjectNotFoundException("No se puede actualizar: Account no encontrado con ID: " + id)))
                 .flatMap(existingAccount -> {
                     accountDetails.setId( existingAccount.getId() );
                     return repository.save(accountDetails);

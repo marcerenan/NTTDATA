@@ -1,7 +1,7 @@
 package com.bank.account.infrastructure.messaging;
 
 import com.bank.account.domain.model.CustomerEvent;
-import com.bank.account.service.SyncCustomerUseCase;
+import com.bank.account.service.SyncCustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class CustomerEventListener {
-    private final SyncCustomerUseCase syncUseCase;
+    private final SyncCustomerService syncUseCase;
 
     @KafkaListener(topics = "customer-events")
     public void listen(CustomerEvent event) {

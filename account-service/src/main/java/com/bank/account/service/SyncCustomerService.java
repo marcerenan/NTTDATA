@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class SyncCustomerUseCase {
+public class SyncCustomerService {
 
     private final ValidatedCustomerRepository repository;
 
@@ -17,6 +17,7 @@ public class SyncCustomerUseCase {
         if ("CREATE".equals(event.getAction())) {
             // Guardamos en la tabla local de R2DBC
             ValidatedCustomerEntity entity = new ValidatedCustomerEntity(event.getCustomerId());
+            entity.setNew(true);
             return repository.save(entity).then();
         } else if ("DELETE".equals(event.getAction())) {
             return repository.deleteById(event.getCustomerId());

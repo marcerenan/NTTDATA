@@ -43,6 +43,43 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
 
+  /api/v1/movements:
+    get:
+      tags:
+        - Movement
+      summary: Get all movements
+      operationId: getAllMovements
+      responses:
+        '200':
+          description: List of movements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Movement'
+
+    post:
+      tags:
+        - Movement
+      summary: Create a movement
+      operationId: createMovement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovementRequest'
+      responses:
+        '201':
+          description: Movement created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movement'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
   /api/v1/accounts/{id}:
 
     get:
@@ -110,6 +147,72 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  /api/v1/movements/{id}:
+
+    get:
+      tags:
+        - Movement
+      summary: Get movement by ID
+      operationId: getMovementById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Movement found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movement'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Movement
+      summary: Update movement
+      operationId: updateMovement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovementRequest'
+      responses:
+        '200':
+          description: Movement updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movement'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Movement
+      summary: Delete movement
+      operationId: deleteMovement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Movement deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
 
 components:
   schemas:
@@ -138,6 +241,32 @@ components:
           type: boolean
           example: true
 
+    Movement:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        accountId:
+          type: integer
+          example: 1
+        movementDate:
+          type: string
+          format: date-time
+          example: "2024-05-20T14:30:00Z"
+        movementType:
+          type: string
+          enum:
+            - Deposit
+            - Withdrawal
+          example: Deposit
+        amount:
+          type: number
+          example: 100.00
+        balance:
+          type: number
+          example: 100.00
+        
 
     AccountRequest:
       type: object
@@ -164,8 +293,37 @@ components:
         status:
           type: boolean
           example: true
-
-    # Esquema de error estándar
+    MovementRequest:
+      type: object
+      required:
+        - accountId
+        - movementDate
+        - movementType
+        - amount
+      properties:
+        id:
+          type: integer
+          example: 1
+        accountId:
+          type: integer
+          example: 1
+        movementDate:
+          type: string
+          format: date-time
+          example: "2024-05-20T14:30:00Z"
+        movementType:
+          type: string
+          enum:
+            - Deposit
+            - Withdrawal
+          example: Deposit
+        amount:
+          type: number
+          example: 100.00
+        balance:
+          type: number
+          example: 100.00
+    # Esquema de error estandar
     ErrorDetails:
       type: object
       properties:
