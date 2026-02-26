@@ -2,9 +2,11 @@ package com.bank.account.service;
 
 import com.bank.account.domain.exception.ObjectNotFoundException;
 import com.bank.account.domain.model.Movement;
+import com.bank.account.domain.repository.AccountRepository;
 import com.bank.account.domain.repository.MovementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -13,13 +15,32 @@ import reactor.core.publisher.Mono;
 public class MovementService {
 
     private final MovementRepository repository;
+    private final AccountRepository accountRepository;
 
     public Flux<Movement> getAll(){
         return repository.findAll();
     }
 
+    @Transactional
     public Mono<Movement> save(Movement movement){
-        return repository.save(movement);
+        return accountRepository.findById( movement.getAccountId() )
+                .switchIfEmpty(Mono.error(new RuntimeException("La cuenta no existe")))
+                .flatMap(account -> {
+                    double amount = movement.getAmount();
+                    boolean isDeposit = "DEPOSIT".equalsIgnoreCase(movement.getMovementType());
+                    double newBalance = isDeposit
+                            ? account.getInitialBalance() + amount
+                            : account.getInitialBalance() - amount;
+                    if (newBalance < 0) {
+                        return Mono.error(new RuntimeException("Saldo insuficiente: " + account.getInitialBalance()));
+                    }
+
+                    account.setInitialBalance(newBalance);
+                    movement.setBalance(newBalance);
+                    return accountRepository.save(account)
+                            .then(repository.save(movement));
+                });
+
     }
 
     public Mono<Void> delete(Integer id){

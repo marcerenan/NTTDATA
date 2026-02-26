@@ -5,9 +5,11 @@ import com.bank.account.domain.model.dto.Movement;
 import com.bank.account.domain.model.dto.MovementRequest;
 import com.bank.account.mapper.MovementMapper;
 import com.bank.account.service.MovementService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
@@ -23,7 +25,7 @@ public class MovementController implements MovementApi {
 
 
     @Override
-    public Mono<ResponseEntity<Movement>> createMovement(Mono<MovementRequest> movementRequest, ServerWebExchange exchange) throws Exception {
+    public Mono<ResponseEntity<Movement>> createMovement(@Valid @RequestBody Mono<MovementRequest> movementRequest, ServerWebExchange exchange) throws Exception {
         return movementRequest
                 .map(mapper::toDomainRequest)
                 .flatMap(service::save)

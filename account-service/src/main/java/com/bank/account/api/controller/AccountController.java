@@ -5,9 +5,11 @@ import com.bank.account.domain.model.dto.Account;
 import com.bank.account.domain.model.dto.AccountRequest;
 import com.bank.account.mapper.AccountMapper;
 import com.bank.account.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
@@ -23,7 +25,7 @@ public class AccountController implements AccountApi {
 
 
     @Override
-    public Mono<ResponseEntity<Account>> createAccount(Mono<AccountRequest> accountRequest, ServerWebExchange exchange) throws Exception {
+    public Mono<ResponseEntity<Account>> createAccount(@Valid @RequestBody Mono<AccountRequest> accountRequest, ServerWebExchange exchange) throws Exception {
         return accountRequest
                 .map(mapper::toDomainRequest)
                 .flatMap(service::save)

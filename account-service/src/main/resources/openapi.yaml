@@ -319,10 +319,10 @@ components:
           example: Deposit
         amount:
           type: number
+          minimum: 0
+          exclusiveMinimum: true
           example: 100.00
-        balance:
-          type: number
-          example: 100.00
+
     # Esquema de error estandar
     ErrorDetails:
       type: object
