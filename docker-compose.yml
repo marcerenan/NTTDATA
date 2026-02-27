@@ -1,0 +1,72 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: bank_db
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/BaseDatos.sql:/docker-entrypoint-initdb.d/BaseDatos.sql:ro
+      - mysql_data:/var/lib/mysql
+
+  redpanda:
+    image: redpandadata/redpanda:v24.1.2
+    container_name: redpanda
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp 1
+      - --memory 512M
+      - --reserve-memory 0M
+      - --node-id 0
+      - --check=false
+    ports:
+      - "9092:9092"
+      - "9644:9644"
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+      
+
+  customer-service:
+    build: ./customer-service
+    container_name: customer-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysql
+      - redpanda
+
+    environment:
+      SPRING_R2DBC_URL: r2dbc:mysql://mysql:3306/bank_db
+      SPRING_R2DBC_USERNAME: appuser
+      SPRING_R2DBC_PASSWORD: password
+      KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
+
+  account-service:
+    build: ./account-service
+    container_name: account-service
+    ports:
+      - "8082:8082"
+
+    depends_on:
+      - mysql
+      - redpanda
+
+    environment:
+      SPRING_R2DBC_URL: r2dbc:mysql://mysql:3306/bank_db
+      SPRING_R2DBC_USERNAME: appuser
+      SPRING_R2DBC_PASSWORD: password
+      KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
+
+
+
+volumes:
+  mysql_data:
+  redpanda_data:
