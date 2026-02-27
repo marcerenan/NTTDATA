@@ -1,0 +1,18 @@
+info:
+  name: DeleteAccount
+  type: http
+  seq: 4
+
+http:
+  method: DELETE
+  url: http://localhost:8082/api/v1/accounts/6
+  body:
+    type: json
+    data: "  "
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

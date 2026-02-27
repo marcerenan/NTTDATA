@@ -1,0 +1,27 @@
+info:
+  name: UpdateCustomer
+  type: http
+  seq: 1
+
+http:
+  method: PUT
+  url: http://localhost:8081/api/v1/customers/2
+  body:
+    type: json
+    data: |2-
+        {
+          "name": "Laura Pilicita",
+          "gender": "Female",
+          "identification": "123456780",
+          "address": "Vicente Heredia",
+          "phone": "0984578807",
+          "password": "1234",
+          "status": true
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

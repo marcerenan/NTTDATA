@@ -1,0 +1,27 @@
+info:
+  name: AddCustomer
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:8081/api/v1/customers
+  body:
+    type: json
+    data: |2-
+        {
+          "name": "Maria Jose",
+          "gender": "Female",
+          "identification": "987654321",
+          "address": "Vicente Heredia",
+          "phone": "222222222",
+          "password": "1234",
+          "status": true
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,25 @@
+info:
+  name: UpdateAccount
+  type: http
+  seq: 5
+
+http:
+  method: PUT
+  url: http://localhost:8082/api/v1/accounts/2
+  body:
+    type: json
+    data: |2-
+        {
+        "accountNumber": "33325223",
+        "accountType": "Checking",
+        "initialBalance": 200.0,
+        "customerId": 1,
+        "status": true
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

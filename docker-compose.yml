@@ -27,9 +27,11 @@ services:
       - --reserve-memory 0M
       - --node-id 0
       - --check=false
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
     ports:
+      - "19092:19092"
       - "9092:9092"
-      - "9644:9644"
     volumes:
       - redpanda_data:/var/lib/redpanda/data
       
@@ -44,10 +46,10 @@ services:
       - redpanda
 
     environment:
-      SPRING_R2DBC_URL: r2dbc:mysql://mysql:3306/bank_db
-      SPRING_R2DBC_USERNAME: appuser
-      SPRING_R2DBC_PASSWORD: password
-      KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/bank_db
+      SPRING_DATASOURCE_USERNAME: appuser
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
 
   account-service:
     build: ./account-service
@@ -63,7 +65,7 @@ services:
       SPRING_R2DBC_URL: r2dbc:mysql://mysql:3306/bank_db
       SPRING_R2DBC_USERNAME: appuser
       SPRING_R2DBC_PASSWORD: password
-      KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
 
 
 

@@ -1,0 +1,26 @@
+info:
+  name: UpdateMovement
+  type: http
+  seq: 5
+
+http:
+  method: PUT
+  url: http://localhost:8082/api/v1/movements/2
+  body:
+    type: json
+    data: |-
+      {
+        "id": 2,
+        "accountId": 1,
+        "movementDate": "2026-02-25T15:30:00Z",
+        "movementType": "Withdrawal",
+        "amount": 100.0,
+        "balance": 1300.0
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
